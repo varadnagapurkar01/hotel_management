@@ -508,7 +508,7 @@ body{font-family:'Inter',sans-serif;background:var(--navy);color:var(--text);hei
 }
 
 /* MOBILE RESPONSIVE */
-@media (max-width: 768px) {
+
   body { overflow: auto; }
 
   .auth-screen { flex-direction: column; }
