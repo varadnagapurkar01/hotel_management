@@ -87,7 +87,7 @@ app.post('/api/bookings', authMiddleware, (req, res) => {
       'INSERT INTO bookings (room_id, guest_name, phone, aadhar, guests_count, check_in, check_out, total_amount, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
     ).run(room_id, guest_name, phone, aadhar, guests_count, check_in, check_out, total_amount, req.user.id);
 
-    db.prepare('UPDATE rooms SET status = "booked" WHERE id = ?').run(room_id);
+    db.prepare("UPDATE rooms SET status = 'booked' WHERE id = ?").run(room_id);
 
     res.json({
       message: 'Booking confirmed',
@@ -104,10 +104,11 @@ app.get('/api/bookings', authMiddleware, (req, res) => {
   const rows = db.prepare(`
     SELECT bookings.*, rooms.room_number, rooms.type, rooms.price
     FROM bookings JOIN rooms ON bookings.room_id = rooms.id
+    WHERE bookings.user_id = ?
     ORDER BY bookings.created_at DESC
-  `).all();
+  `).all(req.user.id);
   res.json(rows);
-});
+}); 
 
 // CHECKOUT
 app.put('/api/bookings/:id/checkout', authMiddleware, (req, res) => {
@@ -121,7 +122,7 @@ app.put('/api/bookings/:id/checkout', authMiddleware, (req, res) => {
 // STATS
 app.get('/api/stats', authMiddleware, (req, res) => {
   const total  = db.prepare('SELECT COUNT(*) as total FROM rooms').get();
-  const booked = db.prepare('SELECT COUNT(*) as booked FROM rooms WHERE status = "booked"').get();
+  const booked = db.prepare("SELECT COUNT(*) as booked FROM rooms WHERE status = 'booked'").get();
   const guests = db.prepare('SELECT COUNT(*) as guests FROM bookings').get();
   const rev    = db.prepare('SELECT SUM(total_amount) as revenue FROM bookings').get();
   res.json({
