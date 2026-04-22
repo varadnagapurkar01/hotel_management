@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VKVV Hotel Management</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Cinzel:wght@400;600;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="authScreen" class="auth-screen">
+  <div class="auth-hero">
+    <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1600&auto=format&fit=crop&q=80" class="auth-bg-img" alt="hotel"/>
+    <div class="auth-overlay"></div>
+    <div class="auth-hero-content">
+      <div class="hero-stars">★★★★★</div>
+      <div class="hero-brand">
+        <img src="vkvv-brand-logo.png" class="hero-logo" alt="VKVV"/>
+        <h1 class="hero-name">VKVV</h1>
+        <p class="hero-tagline">Hotel & Luxury Stays</p>
+      </div>
+      <p class="hero-desc">Where Every Stay Becomes a Memory</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><span>247</span><small>Rooms</small></div>
+        <div class="hero-stat-div"></div>
+        <div class="hero-stat"><span>18</span><small>Years</small></div>
+        <div class="hero-stat-div"></div>
+        <div class="hero-stat"><span>50K+</span><small>Guests</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-panel">
+    <div class="auth-logo">
+      <img src="vkvv-brand-logo.png" class="panel-logo" alt="VKVV"/>
+      <h2 class="panel-title">VKVV</h2>
+      <p class="panel-sub">Management Portal</p>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="tab-btn active" onclick="showTab('login',this)">Sign In</button>
+      <button class="tab-btn" onclick="showTab('register',this)">Register</button>
+    </div>
+
+    <div id="loginForm" class="auth-form">
+      <div class="field">
+        <label>Email Address</label>
+        <div class="field-wrap"><i class="fas fa-envelope"></i>
+          <input type="email" id="loginEmail" placeholder="your@email.com"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <div class="field-wrap"><i class="fas fa-lock"></i>
+          <input type="password" id="loginPassword" placeholder="Min 6 characters"/>
+        </div>
+      </div>
+      <button class="auth-btn" onclick="login()">Sign In <i class="fas fa-arrow-right"></i></button>
+      <div id="loginError" class="msg-box"></div>
+    </div>
+
+    <div id="registerForm" class="auth-form hidden">
+      <div class="field">
+        <label>Full Name <span class="req">(min 3 chars)</span></label>
+        <div class="field-wrap"><i class="fas fa-user"></i>
+          <input type="text" id="regName" placeholder="Your full name"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Email Address</label>
+        <div class="field-wrap"><i class="fas fa-envelope"></i>
+          <input type="email" id="regEmail" placeholder="your@email.com"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Password <span class="req">(min 6 chars)</span></label>
+        <div class="field-wrap"><i class="fas fa-lock"></i>
+          <input type="password" id="regPassword" placeholder="Min 6 characters"/>
+        </div>
+      </div>
+      <button class="auth-btn" onclick="register()">Create Account <i class="fas fa-arrow-right"></i></button>
+      <div id="registerError" class="msg-box"></div>
+    </div>
+  </div>
+</div>
+
+<!-- BILL MODAL -->
+<div id="billModal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <div class="modal-header">
+      <img src="vkvv-brand-logo.png" class="modal-logo" alt="VKVV"/>
+      <h2>VKVV Hotel</h2>
+      <p>Booking Confirmation & Bill</p>
+    </div>
+    <div class="bill-body" id="billBody"></div>
+    <button class="gold-btn full" onclick="closeBill()">
+      <i class="fas fa-check"></i> Done
+    </button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" class="hidden">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <img src="vkvv-brand-logo.png" class="sb-logo" alt="VKVV"/>
+      <div>
+        <div class="sb-name">VKVV</div>
+        <div class="sb-sub">Management System</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-label">MAIN MENU</div>
+      <a href="#" class="nav-item active" onclick="showPage('dashboard',this)">
+        <div class="nav-icon"><i class="fas fa-chart-line"></i></div><span>Dashboard</span>
+      </a>
+      <a href="#" class="nav-item" onclick="showPage('rooms',this)">
+        <div class="nav-icon"><i class="fas fa-door-open"></i></div><span>Rooms</span>
+      </a>
+      <a href="#" class="nav-item" onclick="showPage('bookings',this)">
+        <div class="nav-icon"><i class="fas fa-calendar-alt"></i></div><span>Bookings</span>
+      </a>
+      <a href="#" class="nav-item" onclick="showPage('newbooking',this)">
+        <div class="nav-icon"><i class="fas fa-plus"></i></div><span>New Booking</span>
+      </a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-av" id="userAvatar"></div>
+      <div>
+        <div id="userName" class="u-name"></div>
+        <div id="userRole" class="u-role"></div>
+      </div>
+      <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div>
+        <div id="pageTitle" class="topbar-title">Dashboard</div>
+        <div id="pageSubtitle" class="topbar-sub">Overview of hotel operations</div>
+      </div>
+      <div class="clock-box"><i class="fas fa-clock"></i><span id="clockDisplay"></span></div>
+    </header>
+
+    <!-- DASHBOARD -->
+    <div id="dashboardPage" class="page active">
+      <div class="stats-row">
+        <div class="stat-card" style="--a:#c9a84c">
+          <div class="stat-top">
+            <div class="stat-lbl">Total Rooms</div>
+            <div class="stat-ico" style="background:rgba(201,168,76,.15)"><i class="fas fa-building" style="color:#c9a84c"></i></div>
+          </div>
+          <div class="stat-val" id="statTotal">0</div>
+          <div class="stat-bar"><div class="stat-fill" style="background:#c9a84c;width:100%"></div></div>
+        </div>
+        <div class="stat-card" style="--a:#2ecc71">
+          <div class="stat-top">
+            <div class="stat-lbl">Available</div>
+            <div class="stat-ico" style="background:rgba(46,204,113,.15)"><i class="fas fa-check-circle" style="color:#2ecc71"></i></div>
+          </div>
+          <div class="stat-val" id="statAvailable">0</div>
+          <div class="stat-bar"><div class="stat-fill" id="availBar" style="background:#2ecc71"></div></div>
+        </div>
+        <div class="stat-card" style="--a:#e74c3c">
+          <div class="stat-top">
+            <div class="stat-lbl">Occupied</div>
+            <div class="stat-ico" style="background:rgba(231,76,60,.15)"><i class="fas fa-bed" style="color:#e74c3c"></i></div>
+          </div>
+          <div class="stat-val" id="statBooked">0</div>
+          <div class="stat-bar"><div class="stat-fill" id="bookedBar" style="background:#e74c3c"></div></div>
+        </div>
+        <div class="stat-card" style="--a:#3498db">
+          <div class="stat-top">
+            <div class="stat-lbl">Revenue</div>
+            <div class="stat-ico" style="background:rgba(52,152,219,.15)"><i class="fas fa-rupee-sign" style="color:#3498db"></i></div>
+          </div>
+          <div class="stat-val" id="statRevenue">₹0</div>
+          <div class="stat-bar"><div class="stat-fill" style="background:#3498db;width:70%"></div></div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="welcome-card">
+          <img src="https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800&auto=format&fit=crop" class="welcome-img" alt="lobby"/>
+          <div class="welcome-content">
+            <div class="welcome-badge">Good Day 🌟</div>
+            <h2>Welcome, <span id="welcomeName"></span></h2>
+            <p>Manage your hotel from one place. Handle bookings, track rooms and keep guests happy.</p>
+            <button class="gold-btn" onclick="showPage('newbooking', document.querySelectorAll('.nav-item')[3])">
+              <i class="fas fa-plus"></i> New Booking
+            </button>
+          </div>
+        </div>
+        <div class="room-types-card">
+          <div class="card-title">Room Categories</div>
+          <div class="rt-list">
+            <div class="rt-item">
+              <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=120&auto=format&fit=crop" alt="Standard"/>
+              <div class="rt-info"><div class="rt-name">Standard</div><div class="rt-price">₹1,500/night</div></div>
+              <div class="rt-badge">101,102</div>
+            </div>
+            <div class="rt-item">
+              <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=120&auto=format&fit=crop" alt="Deluxe"/>
+              <div class="rt-info"><div class="rt-name">Deluxe</div><div class="rt-price">₹3,000/night</div></div>
+              <div class="rt-badge">201,202</div>
+            </div>
+            <div class="rt-item">
+              <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?w=120&auto=format&fit=crop" alt="Suite"/>
+              <div class="rt-info"><div class="rt-name">Suite</div><div class="rt-price">₹6,000/night</div></div>
+              <div class="rt-badge">301,302</div>
+            </div>
+            <div class="rt-item">
+              <img src="https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=120&auto=format&fit=crop" alt="Presidential"/>
+              <div class="rt-info"><div class="rt-name">Presidential</div><div class="rt-price">₹12,000/night</div></div>
+              <div class="rt-badge">401</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROOMS -->
+    <div id="roomsPage" class="page hidden">
+      <div class="page-toolbar">
+        <div class="filter-pills">
+          <button class="pill active" onclick="filterRooms('all',this)">All Rooms</button>
+          <button class="pill" onclick="filterRooms('available',this)">Available</button>
+          <button class="pill" onclick="filterRooms('booked',this)">Occupied</button>
+        </div>
+      </div>
+      <div id="roomsGrid" class="rooms-grid"></div>
+    </div>
+
+    <!-- BOOKINGS -->
+    <div id="bookingsPage" class="page hidden">
+      <div id="bookingsList" class="bookings-list"></div>
+    </div>
+
+    <!-- NEW BOOKING -->
+    <div id="newbookingPage" class="page hidden">
+      <div class="booking-hero">
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&auto=format&fit=crop" alt="booking"/>
+        <div class="booking-hero-text">
+          <h2>Reserve a Room</h2>
+          <p>Fill in guest details to confirm booking</p>
+        </div>
+      </div>
+      <div class="booking-form-card">
+        <div class="form-grid">
+          <div class="form-group">
+            <label><i class="fas fa-user"></i> Guest Full Name</label>
+            <input type="text" id="guestName" placeholder="Enter guest full name"/>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-phone"></i> Phone Number</label>
+            <input type="tel" id="guestPhone" placeholder="10-digit mobile number" maxlength="10"/>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-id-card"></i> Aadhar Number</label>
+            <input type="text" id="guestAadhar" placeholder="12-digit Aadhar" maxlength="12"/>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-users"></i> Number of Guests</label>
+            <select id="guestsCount">
+              <option value="1">1 Guest</option>
+              <option value="2">2 Guests</option>
+              <option value="3">3 Guests</option>
+              <option value="4">4 Guests</option>
+              <option value="5">5+ Guests</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-door-open"></i> Select Room</label>
+            <select id="roomSelect"></select>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-calendar-plus"></i> Check-In Date</label>
+            <input type="date" id="checkIn"/>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-calendar-minus"></i> Check-Out Date</label>
+            <input type="date" id="checkOut"/>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-receipt"></i> Estimated Bill</label>
+            <div class="bill-preview" id="billPreview">Select room & dates to see bill</div>
+          </div>
+        </div>
+        <button class="gold-btn big" onclick="createBooking()">
+          <i class="fas fa-check"></i> Confirm Booking
+        </button>
+        <div id="bookingMsg" class="msg-box"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
