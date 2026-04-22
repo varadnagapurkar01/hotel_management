@@ -125,14 +125,20 @@ app.get('/api/stats', authMiddleware, (req, res) => {
   const booked = db.prepare("SELECT COUNT(*) as booked FROM rooms WHERE status = 'booked'").get();
   const guests = db.prepare('SELECT COUNT(*) as guests FROM bookings').get();
   const rev    = db.prepare('SELECT SUM(total_amount) as revenue FROM bookings').get();
+ const isAdmin = req.user.role === 'admin';
   res.json({
     total: total.total,
     booked: booked.booked,
     available: total.total - booked.booked,
     guests: guests.guests,
-    revenue: rev.revenue || 0
+    revenue: isAdmin ? (rev.revenue || 0) : null
   });
 });
 
 const PORT = process.env.PORT || 3000;
+app.get('/api/cleardata', (req, res) => {
+  db.prepare('DELETE FROM bookings').run();
+  db.prepare("UPDATE rooms SET status='available'").run();
+  res.json({ message: 'All bookings cleared!' });
+});
 app.listen(PORT, () => console.log(`🏨 VKVV Hotel Server → http://localhost:${PORT}`));
