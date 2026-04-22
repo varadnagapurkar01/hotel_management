@@ -96,11 +96,31 @@
       <p>Booking Confirmation & Bill</p>
     </div>
     <div class="bill-body" id="billBody"></div>
-    <button class="gold-btn full" onclick="closeBill()">
+    <button class="gold-btn full" onclick="showSuccess()">
       <i class="fas fa-check"></i> Done
     </button>
   </div>
 </div>
+
+<!-- SUCCESS MODAL -->
+<div id="successModal" class="modal-overlay hidden">
+  <div class="modal-card success-card">
+    <div class="success-icon">✅</div>
+    <h2 class="success-title">Booking Confirmed!</h2>
+    <p class="success-msg">Your room has been successfully reserved.</p>
+    <div class="success-info">
+      <i class="fas fa-info-circle"></i>
+      Payment will be collected at the time of checkout.
+    </div>
+    <p class="success-sub">You can view your booking details in the <strong>Bookings</strong> section.</p>
+    <button class="gold-btn full" onclick="goToBookings()">
+      <i class="fas fa-calendar-check"></i> View My Bookings
+    </button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+
 
 <!-- MAIN APP -->
 <div id="mainApp" class="hidden">

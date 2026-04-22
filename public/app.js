@@ -270,6 +270,16 @@ function closeBill() {
   document.getElementById('billModal').classList.add('hidden');
 }
 
+function showSuccess() {
+  document.getElementById('billModal').classList.add('hidden');
+  document.getElementById('successModal').classList.remove('hidden');
+}
+
+function goToBookings() {
+  document.getElementById('successModal').classList.add('hidden');
+  showPage('bookings', document.querySelectorAll('.nav-item')[2]);
+}
+
 // CHECKOUT
 async function checkout(id) {
   if (!confirm('Confirm checkout for this guest?')) return;
