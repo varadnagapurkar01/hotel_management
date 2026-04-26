@@ -1241,20 +1241,50 @@ body {
 /* BRAND WATERMARK */
 .brand-watermark {
   position: absolute;
-  bottom: -50px;
-  right: -50px;
-  width: 400px;
-  height: 400px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vh;
+  height: 80vh;
   background-image: url('vkvv-brand-logo.png');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  opacity: 0.03;
+  opacity: 0.08;
   pointer-events: none;
   z-index: 0;
+  filter: drop-shadow(0 0 30px rgba(201, 168, 76, 0.2));
 }
 
-/* GALLERY MODAL */
+/* GALLERY MODAL & CLOSE BUTTON */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 15px;
+}
+.modal-close {
+  background: rgba(231, 76, 60, 0.15);
+  color: var(--red);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+.modal-close:hover {
+  background: var(--red);
+  color: white;
+  transform: rotate(90deg);
+  box-shadow: 0 0 15px rgba(231, 76, 60, 0.5);
+}
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
