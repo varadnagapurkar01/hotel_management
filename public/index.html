@@ -135,17 +135,20 @@
     </div>
     <nav class="sidebar-nav">
       <div class="nav-label">MAIN MENU</div>
-      <a href="#" class="nav-item active" onclick="showPage('dashboard',this)">
+      <a href="#" id="navDashboard" class="nav-item active" onclick="showPage('dashboard',this)">
         <div class="nav-icon"><i class="fas fa-chart-line"></i></div><span>Dashboard</span>
       </a>
-      <a href="#" class="nav-item" onclick="showPage('rooms',this)">
+      <a href="#" id="navRooms" class="nav-item" onclick="showPage('rooms',this)">
         <div class="nav-icon"><i class="fas fa-door-open"></i></div><span>Rooms</span>
       </a>
-      <a href="#" class="nav-item" onclick="showPage('bookings',this)">
+      <a href="#" id="navBookings" class="nav-item" onclick="showPage('bookings',this)">
         <div class="nav-icon"><i class="fas fa-calendar-alt"></i></div><span>Bookings</span>
       </a>
-      <a href="#" class="nav-item" onclick="showPage('newbooking',this)">
+      <a href="#" id="navNewBooking" class="nav-item" onclick="showPage('newbooking',this)">
         <div class="nav-icon"><i class="fas fa-plus"></i></div><span>New Booking</span>
+      </a>
+      <a href="#" id="navHistory" class="nav-item" onclick="showPage('history',this)">
+        <div class="nav-icon"><i class="fas fa-history"></i></div><span>History</span>
       </a>
     </nav>
     <div class="sidebar-user">
@@ -255,6 +258,18 @@
     <!-- BOOKINGS -->
     <div id="bookingsPage" class="page hidden">
       <div id="bookingsList" class="bookings-list"></div>
+    </div>
+
+    <!-- HISTORY -->
+    <div id="historyPage" class="page hidden">
+      <div class="booking-hero">
+        <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1200&auto=format&fit=crop" alt="history"/>
+        <div class="booking-hero-text">
+          <h2>Booking History</h2>
+          <p>Your past stays and completed bookings</p>
+        </div>
+      </div>
+      <div id="historyList" class="bookings-list" style="margin-top: 2rem;"></div>
     </div>
 
     <!-- NEW BOOKING -->

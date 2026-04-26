@@ -97,7 +97,17 @@ function initApp(name, role) {
   document.getElementById('userRole').textContent    = role;
   document.getElementById('welcomeName').textContent = name;
   document.getElementById('userAvatar').textContent  = name.charAt(0).toUpperCase();
-  loadStats();
+  
+  // Role-based UI
+  if (role === 'admin') {
+    document.getElementById('navDashboard').style.display = 'flex';
+    loadStats();
+    showPage('dashboard', document.getElementById('navDashboard'));
+  } else {
+    document.getElementById('navDashboard').style.display = 'none';
+    showPage('newbooking', document.getElementById('navNewBooking'));
+  }
+  
   loadRooms();
 }
 
@@ -192,9 +202,35 @@ async function loadBookings() {
       <div class="booking-meta">
         <div class="booking-dates">${b.check_in} → ${b.check_out}</div>
         <div class="booking-amount">₹${(b.total_amount||0).toLocaleString('en-IN')}</div>
-        <button class="checkout-btn" onclick="checkout(${b.id})">
-          <i class="fas fa-sign-out-alt"></i> Checkout
-        </button>
+        ${localStorage.getItem('userRole') === 'admin' ? `
+          <button class="checkout-btn" onclick="checkout(${b.id})">
+            <i class="fas fa-sign-out-alt"></i> Checkout
+          </button>
+        ` : ''}
+      </div>
+    </div>`).join('');
+}
+
+// HISTORY
+async function loadHistory() {
+  const res  = await fetch(`${API}/history`, { headers:{ Authorization: `Bearer ${token}` } });
+  const data = await res.json();
+  const list = document.getElementById('historyList');
+  if (!data.length) {
+    list.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted);font-size:15px;">No history yet.</div>';
+    return;
+  }
+  list.innerHTML = data.map((b, i) => `
+    <div class="booking-card" style="opacity: 0.8;">
+      <div class="booking-num"><i class="fas fa-history"></i></div>
+      <div class="booking-details">
+        <h3>${b.guest_name}</h3>
+        <p>Room ${b.room_number} · ${b.room_type} · ${b.guests_count} guest${b.guests_count>1?'s':''} · 📞 ${b.phone}</p>
+      </div>
+      <div class="booking-meta">
+        <div class="booking-dates">${b.check_in} → ${b.check_out}</div>
+        <div class="booking-amount">₹${(b.total_amount||0).toLocaleString('en-IN')}</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:8px;">Archived: ${b.archived_at}</div>
       </div>
     </div>`).join('');
 }
@@ -307,10 +343,12 @@ function showPage(page, el) {
     dashboard:  ['Dashboard','Overview of hotel operations'],
     rooms:      ['Room Directory','All rooms sorted by price'],
     bookings:   ['Bookings','All current guest bookings'],
-    newbooking: ['New Booking','Reserve a room for a guest']
+    newbooking: ['New Booking','Reserve a room for a guest'],
+    history:    ['Booking History','Past stays and completed bookings']
   };
   document.getElementById('pageTitle').textContent    = titles[page][0];
   document.getElementById('pageSubtitle').textContent = titles[page][1];
   if (page==='bookings')   loadBookings();
   if (page==='rooms')      loadRooms();
+  if (page==='history')    loadHistory();
 }

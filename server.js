@@ -1,9 +1,97 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const db = require('./database');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
+const ADMIN_EMAILS = ['vkvvitworld@gmail.com']; // Add more admin emails here if needed
+
+// Auto-export database to readable Markdown after changes
+function exportSnapshot() {
+  try {
+    const users = db.prepare('SELECT id, name, email, role FROM users').all();
+    const rooms = db.prepare('SELECT * FROM rooms ORDER BY room_number').all();
+    const bookings = db.prepare(`
+      SELECT bookings.*, rooms.room_number, rooms.type AS room_type
+      FROM bookings JOIN rooms ON bookings.room_id = rooms.id
+      ORDER BY bookings.created_at DESC
+    `).all();
+    const history = db.prepare(`
+      SELECT * FROM booking_history ORDER BY archived_at DESC
+    `).all();
+    const updated = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+    let md = `# 🏨 VKVV Hotel Database\n\n`;
+    md += `> Last updated: **${updated}**\n\n---\n\n`;
+
+    md += `## 👤 Users (${users.length})\n\n`;
+    md += `| ID | Name | Email | Role |\n|----|------|-------|------|\n`;
+    users.forEach(u => { md += `| ${u.id} | ${u.name} | ${u.email} | ${u.role} |\n`; });
+
+    md += `\n---\n\n## 🚪 Rooms (${rooms.length})\n\n`;
+    md += `| ID | Room # | Type | Price | Status |\n|----|--------|------|-------|--------|\n`;
+    rooms.forEach(r => {
+      const s = r.status === 'booked' ? '🔴 Booked' : '🟢 Available';
+      md += `| ${r.id} | ${r.room_number} | ${r.type} | ₹${r.price.toLocaleString('en-IN')} | ${s} |\n`;
+    });
+
+    md += `\n---\n\n## 📋 Bookings (${bookings.length})\n\n`;
+    if (bookings.length > 0) {
+      md += `| ID | Guest | Phone | Room | Type | Check-In | Check-Out | Amount | Created |\n|----|-------|-------|------|------|----------|-----------|--------|--------|\n`;
+      bookings.forEach(b => {
+        md += `| ${b.id} | ${b.guest_name} | ${b.phone} | ${b.room_number} | ${b.room_type} | ${b.check_in} | ${b.check_out} | ₹${b.total_amount.toLocaleString('en-IN')} | ${b.created_at} |\n`;
+      });
+    } else { md += `_No bookings yet._\n`; }
+
+    md += `\n---\n\n## 🕰️ Booking History (${history.length})\n\n`;
+    if (history.length > 0) {
+      md += `| ID | Guest | Phone | Room | Type | Check-In | Check-Out | Amount | Archived On |\n|----|-------|-------|------|------|----------|-----------|--------|-------------|\n`;
+      history.forEach(h => {
+        md += `| ${h.id} | ${h.guest_name} | ${h.phone} | ${h.room_number} | ${h.room_type} | ${h.check_in} | ${h.check_out} | ₹${h.total_amount.toLocaleString('en-IN')} | ${h.archived_at} |\n`;
+      });
+    } else { md += `_No history yet._\n`; }
+
+    md += `\n---\n_Auto-generated. Do not edit._\n`;
+    fs.writeFileSync(path.join(__dirname, 'hotel-db-view.md'), md);
+  } catch (e) { /* silent */ }
+}
+
+// Move past bookings to history
+function archiveExpiredBookings() {
+  try {
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const expired = db.prepare(`
+      SELECT bookings.*, rooms.room_number, rooms.type AS room_type
+      FROM bookings JOIN rooms ON bookings.room_id = rooms.id
+      WHERE bookings.check_out < ?
+    `).all(today);
+
+    if (expired.length > 0) {
+      const insertHistory = db.prepare(`
+        INSERT INTO booking_history 
+        (original_booking_id, room_id, room_number, room_type, guest_name, phone, guests_count, check_in, check_out, total_amount, user_id, booked_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+      const deleteBooking = db.prepare('DELETE FROM bookings WHERE id = ?');
+      const updateRoom = db.prepare('UPDATE rooms SET status = "available" WHERE id = ?');
+
+      const transaction = db.transaction(() => {
+        for (const b of expired) {
+          insertHistory.run(b.id, b.room_id, b.room_number, b.room_type, b.guest_name, b.phone, b.guests_count, b.check_in, b.check_out, b.total_amount, b.user_id, b.created_at);
+          deleteBooking.run(b.id);
+          updateRoom.run(b.room_id);
+        }
+      });
+      transaction();
+      console.log(`Archived ${expired.length} expired bookings.`);
+      exportSnapshot();
+    }
+  } catch (err) {
+    console.error("Archive error:", err);
+  }
+}
 
 const app = express();
 const SECRET = 'vkvv_hotel_secret_2024';
@@ -24,6 +112,14 @@ function authMiddleware(req, res, next) {
   }
 }
 
+function isAdmin(req, res, next) {
+  if (req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    res.status(403).json({ error: 'Admin access required' });
+  }
+}
+
 // REGISTER
 app.post('/api/register', (req, res) => {
   const { name, email, password } = req.body;
@@ -36,8 +132,10 @@ app.post('/api/register', (req, res) => {
     return res.status(400).json({ error: 'Password must be at least 6 characters' });
   try {
     const hash = bcrypt.hashSync(password, 10);
-    db.prepare('INSERT INTO users (name, email, password) VALUES (?, ?, ?)')
-      .run(name.trim(), email.toLowerCase(), hash);
+    const role = ADMIN_EMAILS.includes(email.toLowerCase()) ? 'admin' : 'staff'; // default to staff/user
+    db.prepare('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)')
+      .run(name.trim(), email.toLowerCase(), hash, role);
+    exportSnapshot();
     res.json({ message: 'Registered successfully' });
   } catch (err) {
     res.status(400).json({ error: 'Email already registered' });
@@ -89,6 +187,7 @@ app.post('/api/bookings', authMiddleware, (req, res) => {
 
     db.prepare("UPDATE rooms SET status = 'booked' WHERE id = ?").run(room_id);
 
+    exportSnapshot();
     res.json({
       message: 'Booking confirmed',
       id: result.lastInsertRowid,
@@ -101,26 +200,63 @@ app.post('/api/bookings', authMiddleware, (req, res) => {
 
 // GET BOOKINGS
 app.get('/api/bookings', authMiddleware, (req, res) => {
-  const rows = db.prepare(`
+  let query = `
     SELECT bookings.*, rooms.room_number, rooms.type, rooms.price
     FROM bookings JOIN rooms ON bookings.room_id = rooms.id
-    WHERE bookings.user_id = ?
-    ORDER BY bookings.created_at DESC
-  `).all(req.user.id);
+  `;
+  let rows;
+  
+  if (req.user.role === 'admin') {
+    query += ' ORDER BY bookings.created_at DESC';
+    rows = db.prepare(query).all();
+  } else {
+    query += ' WHERE bookings.user_id = ? ORDER BY bookings.created_at DESC';
+    rows = db.prepare(query).all(req.user.id);
+  }
+  
   res.json(rows);
 }); 
 
+// GET HISTORY
+app.get('/api/history', authMiddleware, (req, res) => {
+  let rows;
+  if (req.user.role === 'admin') {
+    rows = db.prepare('SELECT * FROM booking_history ORDER BY archived_at DESC').all();
+  } else {
+    rows = db.prepare('SELECT * FROM booking_history WHERE user_id = ? ORDER BY archived_at DESC').all(req.user.id);
+  }
+  res.json(rows);
+});
+
 // CHECKOUT
-app.put('/api/bookings/:id/checkout', authMiddleware, (req, res) => {
-  const booking = db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
+app.put('/api/bookings/:id/checkout', authMiddleware, isAdmin, (req, res) => {
+  const booking = db.prepare(`
+    SELECT bookings.*, rooms.room_number, rooms.type AS room_type 
+    FROM bookings JOIN rooms ON bookings.room_id = rooms.id 
+    WHERE bookings.id = ?
+  `).get(req.params.id);
+  
   if (!booking) return res.status(404).json({ error: 'Booking not found' });
-  db.prepare('UPDATE rooms SET status = "available" WHERE id = ?').run(booking.room_id);
-  db.prepare('DELETE FROM bookings WHERE id = ?').run(req.params.id);
+  
+  const insertHistory = db.prepare(`
+    INSERT INTO booking_history 
+    (original_booking_id, room_id, room_number, room_type, guest_name, phone, guests_count, check_in, check_out, total_amount, user_id, booked_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+  
+  const transaction = db.transaction(() => {
+    insertHistory.run(booking.id, booking.room_id, booking.room_number, booking.room_type, booking.guest_name, booking.phone, booking.guests_count, booking.check_in, booking.check_out, booking.total_amount, booking.user_id, booking.created_at);
+    db.prepare('UPDATE rooms SET status = "available" WHERE id = ?').run(booking.room_id);
+    db.prepare('DELETE FROM bookings WHERE id = ?').run(req.params.id);
+  });
+  
+  transaction();
+  exportSnapshot();
   res.json({ message: 'Checked out successfully' });
 });
 
-// STATS
-app.get('/api/stats', authMiddleware, (req, res) => {
+// STATS (Admin only)
+app.get('/api/stats', authMiddleware, isAdmin, (req, res) => {
   const total  = db.prepare('SELECT COUNT(*) as total FROM rooms').get();
   const booked = db.prepare("SELECT COUNT(*) as booked FROM rooms WHERE status = 'booked'").get();
   const guests = db.prepare('SELECT COUNT(*) as guests FROM bookings').get();
@@ -135,4 +271,8 @@ app.get('/api/stats', authMiddleware, (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🏨 VKVV Hotel Server → http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  archiveExpiredBookings(); // Archive any expired bookings on startup
+  exportSnapshot(); // Generate initial snapshot on startup
+  console.log(`🏨 VKVV Hotel Server → http://localhost:${PORT}`);
+});

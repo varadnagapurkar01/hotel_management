@@ -31,6 +31,22 @@ db.exec(`
     user_id INTEGER,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+  CREATE TABLE IF NOT EXISTS booking_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    original_booking_id INTEGER,
+    room_id INTEGER,
+    room_number TEXT,
+    room_type TEXT,
+    guest_name TEXT,
+    phone TEXT,
+    guests_count INTEGER DEFAULT 1,
+    check_in TEXT,
+    check_out TEXT,
+    total_amount INTEGER DEFAULT 0,
+    user_id INTEGER,
+    booked_at DATETIME,
+    archived_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
 `);
 
 const roomCount = db.prepare('SELECT COUNT(*) as count FROM rooms').get();
