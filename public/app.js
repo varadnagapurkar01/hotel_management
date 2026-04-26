@@ -110,7 +110,7 @@ async function loadStats() {
   document.getElementById('statTotal').textContent     = data.total;
   document.getElementById('statAvailable').textContent = data.available;
   document.getElementById('statBooked').textContent    = data.booked;
-  document.getElementById('statRevenue').textContent   = '₹' + data.revenue.toLocaleString('en-IN');
+
   const pct = data.total ? Math.round((data.available / data.total) * 100) : 0;
   document.getElementById('availBar').style.width  = pct + '%';
   document.getElementById('bookedBar').style.width = (100 - pct) + '%';
