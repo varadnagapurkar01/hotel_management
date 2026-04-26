@@ -1,6 +1,7 @@
 const API = window.location.origin + '/api';
 let token = localStorage.getItem('token');
 let allRooms = [];
+let lastBill = null;
 
 const roomImages = {
   'Standard':     'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400&auto=format&fit=crop',
@@ -20,7 +21,7 @@ const galleryImages = {
     'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&auto=format&fit=crop',
     'https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=800&auto=format&fit=crop',
     'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1598928506311-c55dd1b3112b?w=800&auto=format&fit=crop'
+    'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=800&auto=format&fit=crop'
   ],
   'Suite': [
     'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&auto=format&fit=crop',
@@ -329,6 +330,7 @@ async function createBooking() {
   const data = await res.json();
 
   if (res.ok) {
+    lastBill = data.bill; // Save for WhatsApp
     showBill(data.bill);
     loadRooms();
     loadStats();
@@ -356,6 +358,12 @@ function showBill(bill) {
     <div class="bill-row"><span class="lbl">Rate/Night</span><span class="val">₹${bill.price_per_night.toLocaleString('en-IN')}</span></div>
     <div class="bill-total"><span class="lbl">Total Amount</span><span class="val">₹${bill.total_amount.toLocaleString('en-IN')}</span></div>
   `;
+  
+  const successText = document.getElementById('successMsgText');
+  if(successText) {
+    successText.innerHTML = `Welcome <strong>${bill.guest}</strong>! Your booking for the <strong>${bill.type} Room (${bill.room})</strong> is confirmed.`;
+  }
+
   document.getElementById('billModal').classList.remove('hidden');
 }
 
@@ -366,6 +374,15 @@ function closeBill() {
 function showSuccess() {
   document.getElementById('billModal').classList.add('hidden');
   document.getElementById('successModal').classList.remove('hidden');
+}
+
+function sendWhatsApp() {
+  if (!lastBill) return;
+
+  const phone = document.getElementById('guestPhone').value || ""; // Grab phone from form if not in bill
+  const msg = `*VKVV Hotel Confirmation* 🏨%0A%0AHello *${lastBill.guest}*,%0A%0AYour booking is *Confirmed*! ✅%0A%0A🛏️ *Room:* ${lastBill.room} (${lastBill.type})%0A📅 *Check-In:* ${lastBill.check_in}%0A📅 *Check-Out:* ${lastBill.check_out}%0A🌙 *Nights:* ${lastBill.nights}%0A💰 *Total Amount:* ₹${lastBill.total_amount.toLocaleString('en-IN')}%0A%0AWe look forward to welcoming you! ✨`;
+
+  window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
 }
 
 function goToBookings() {

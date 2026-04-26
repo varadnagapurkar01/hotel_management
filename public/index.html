@@ -107,14 +107,17 @@
   <div class="modal-card success-card">
     <div class="success-icon">✅</div>
     <h2 class="success-title">Booking Confirmed!</h2>
-    <p class="success-msg">Your room has been successfully reserved.</p>
+    <p id="successMsgText" class="success-msg">Your room has been successfully reserved.</p>
     <div class="success-info">
       <i class="fas fa-info-circle"></i>
       Payment will be collected at the time of checkout.
     </div>
     <p class="success-sub">You can view your booking details in the <strong>Bookings</strong> section.</p>
-    <button class="gold-btn full" onclick="goToBookings()">
+    <button class="gold-btn full" onclick="goToBookings()" style="margin-bottom: 10px;">
       <i class="fas fa-calendar-check"></i> View My Bookings
+    </button>
+    <button class="gold-btn full" onclick="sendWhatsApp()" style="background: linear-gradient(135deg, #25d366, #128c7e); border: none;">
+      <i class="fab fa-whatsapp"></i> Send WhatsApp Confirmation
     </button>
   </div>
 </div>
