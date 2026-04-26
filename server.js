@@ -6,7 +6,7 @@ const db = require('./database');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const ADMIN_EMAILS = ['vkvvitworld@gmail.com']; // Add more admin emails here if needed
+const ADMIN_EMAILS = ['vkvvitworld@admin.com']; // Add more admin emails here if needed
 
 // Auto-export database to readable Markdown after changes
 function exportSnapshot() {

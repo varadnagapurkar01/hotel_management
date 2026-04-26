@@ -1,6 +1,6 @@
 # 🏨 VKVV Hotel Database
 
-> Last updated: **26/4/2026, 3:23:50 pm**
+> Last updated: **26/4/2026, 3:56:28 pm**
 
 ---
 
@@ -8,7 +8,7 @@
 
 | ID | Name | Email | Role |
 |----|------|-------|------|
-| 2 | Admin | vkvvitworld@gmail.com | admin |
+| 1 | Admin | vkvvitworld@admin.com | admin |
 
 ---
 
@@ -37,5 +37,4 @@ _No bookings yet._
 _No history yet._
 
 ---
-
 _This file is auto-generated. Do not edit manually._

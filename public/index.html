@@ -162,6 +162,7 @@
   </aside>
 
   <main class="main-content">
+    <div class="brand-watermark"></div>
     <header class="topbar">
       <div style="display: flex; align-items: center;">
         <button class="mobile-menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
@@ -330,6 +331,17 @@
     </div>
 
   </main>
+</div>
+
+<!-- GALLERY MODAL -->
+<div id="galleryModal" class="modal-overlay hidden">
+  <div class="modal-card" style="max-width: 700px;">
+    <div class="modal-header">
+      <h2 class="modal-title"><i class="fas fa-images"></i> <span id="galleryTitle">Room Gallery</span></h2>
+      <button class="modal-close" onclick="closeGallery()"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="galleryContent" class="gallery-grid"></div>
+  </div>
 </div>
 
 <script src="app.js"></script>

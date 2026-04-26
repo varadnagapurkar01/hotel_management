@@ -22,8 +22,8 @@ try {
   // 2. Re-seed Admin User
   const hash = bcrypt.hashSync('varad', 10);
   db.prepare('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)')
-    .run('Admin', 'vkvvitworld@gmail.com', hash, 'admin');
-  console.log('✅ Admin user (vkvvitworld@gmail.com) recreated.');
+    .run('Admin', 'vkvvitworld@admin.com', hash, 'admin');
+  console.log('✅ Admin user (vkvvitworld@admin.com) recreated.');
 
   // 3. Update the markdown view automatically
   function exportSnapshot() {

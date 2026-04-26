@@ -9,6 +9,33 @@ const roomImages = {
   'Presidential': 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=400&auto=format&fit=crop'
 };
 
+const galleryImages = {
+  'Standard': [
+    'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&auto=format&fit=crop'
+  ],
+  'Deluxe': [
+    'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=800&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1598928506311-c55dd1b3112b?w=800&auto=format&fit=crop'
+  ],
+  'Suite': [
+    'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1505693314120-0d443867891c?w=800&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1583847268964-b28ce8fba08e?w=800&auto=format&fit=crop'
+  ],
+  'Presidential': [
+    'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&auto=format&fit=crop'
+  ]
+};
+
 // CLOCK
 function updateClock() {
   const now = new Date();
@@ -136,7 +163,7 @@ async function loadRooms() {
 
 function renderRooms(rooms) {
   document.getElementById('roomsGrid').innerHTML = rooms.map(r => `
-    <div class="room-card">
+    <div class="room-card" onclick="openGallery('${r.type}')" style="cursor: pointer;" title="Click to view more images">
       <img class="room-card-img" src="${roomImages[r.type] || roomImages['Standard']}" alt="${r.type}"/>
       <div class="room-card-body">
         <div class="room-number">${r.room_number}</div>
@@ -160,6 +187,20 @@ function populateRoomSelect(rooms) {
     ? rooms.map(r => `<option value="${r.id}">Room ${r.room_number} — ${r.type} (₹${r.price.toLocaleString('en-IN')}/night)</option>`).join('')
     : '<option disabled>No rooms available</option>';
   updateBillPreview();
+}
+
+// GALLERY LOGIC
+function openGallery(type) {
+  const images = galleryImages[type] || galleryImages['Standard'];
+  document.getElementById('galleryTitle').textContent = `${type} Room Gallery`;
+  document.getElementById('galleryContent').innerHTML = images.map(img => `
+    <img src="${img}" class="gallery-img" alt="${type} room">
+  `).join('');
+  document.getElementById('galleryModal').classList.remove('hidden');
+}
+
+function closeGallery() {
+  document.getElementById('galleryModal').classList.add('hidden');
 }
 
 // BILL PREVIEW
