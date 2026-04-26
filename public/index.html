@@ -124,7 +124,8 @@
 
 <!-- MAIN APP -->
 <div id="mainApp" class="hidden">
-  <aside class="sidebar">
+  <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+  <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <img src="vkvv-brand-logo.png" class="sb-logo" alt="VKVV"/>
       <div>
@@ -159,9 +160,12 @@
 
   <main class="main-content">
     <header class="topbar">
-      <div>
-        <div id="pageTitle" class="topbar-title">Dashboard</div>
-        <div id="pageSubtitle" class="topbar-sub">Overview of hotel operations</div>
+      <div style="display: flex; align-items: center;">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+        <div>
+          <div id="pageTitle" class="topbar-title">Dashboard</div>
+          <div id="pageSubtitle" class="topbar-sub">Overview of hotel operations</div>
+        </div>
       </div>
       <div class="clock-box"><i class="fas fa-clock"></i><span id="clockDisplay"></span></div>
     </header>

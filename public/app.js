@@ -288,7 +288,16 @@ async function checkout(id) {
 }
 
 // NAVIGATION
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('show');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+
 function showPage(page, el) {
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.remove('show');
+    document.getElementById('sidebarOverlay').classList.remove('show');
+  }
   document.querySelectorAll('.page').forEach(p => { p.classList.add('hidden'); p.classList.remove('active'); });
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById(page+'Page').classList.remove('hidden');
