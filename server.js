@@ -178,7 +178,7 @@ app.post('/api/bookings', authMiddleware, (req, res) => {
   const nights = Math.ceil((new Date(check_out) - new Date(check_in)) / 86400000);
   if (nights <= 0) return res.status(400).json({ error: 'Check-out must be after check-in' });
 
-  const total_amount = room.price * nights;
+  const total_amount = room.price * nights * guests_count;
 
   try {
     const result = db.prepare(
@@ -191,7 +191,7 @@ app.post('/api/bookings', authMiddleware, (req, res) => {
     res.json({
       message: 'Booking confirmed',
       id: result.lastInsertRowid,
-      bill: { guest: guest_name, room: room.room_number, type: room.type, nights, price_per_night: room.price, total_amount, check_in, check_out }
+      bill: { guest: guest_name, room: room.room_number, type: room.type, nights, guests_count, price_per_night: room.price, total_amount, check_in, check_out }
     });
   } catch (err) {
     res.status(400).json({ error: err.message });

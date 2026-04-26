@@ -231,14 +231,17 @@ function updateBillPreview() {
   }
   const room   = allRooms.find(r => r.id == roomSel.value);
   const nights = Math.ceil((new Date(checkOut) - new Date(checkIn)) / 86400000);
+  const guestsCount = parseInt(document.getElementById('guestsCount').value) || 1;
   if (!room || nights <= 0) { preview.textContent = 'Check-out must be after check-in'; return; }
-  preview.textContent = `${nights} night${nights>1?'s':''} × ₹${room.price.toLocaleString('en-IN')} = ₹${(nights*room.price).toLocaleString('en-IN')}`;
+  const total = nights * room.price * guestsCount;
+  preview.textContent = `${nights} night${nights>1?'s':''} × ${guestsCount} guest${guestsCount>1?'s':''} × ₹${room.price.toLocaleString('en-IN')} = ₹${total.toLocaleString('en-IN')}`;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('roomSelect')?.addEventListener('change', updateBillPreview);
   document.getElementById('checkIn')?.addEventListener('change', updateBillPreview);
   document.getElementById('checkOut')?.addEventListener('change', updateBillPreview);
+  document.getElementById('guestsCount')?.addEventListener('change', updateBillPreview);
 });
 
 // BOOKINGS
@@ -354,6 +357,7 @@ function showBill(bill) {
     <div class="bill-row"><span class="lbl">Room</span><span class="val">${bill.room} (${bill.type})</span></div>
     <div class="bill-row"><span class="lbl">Check-In</span><span class="val">${bill.check_in}</span></div>
     <div class="bill-row"><span class="lbl">Check-Out</span><span class="val">${bill.check_out}</span></div>
+    <div class="bill-row"><span class="lbl">Guests</span><span class="val">${bill.guests_count || 1} Person${(bill.guests_count || 1) > 1 ? 's' : ''}</span></div>
     <div class="bill-row"><span class="lbl">Duration</span><span class="val">${bill.nights} Night${bill.nights>1?'s':''}</span></div>
     <div class="bill-row"><span class="lbl">Rate/Night</span><span class="val">₹${bill.price_per_night.toLocaleString('en-IN')}</span></div>
     <div class="bill-total"><span class="lbl">Total Amount</span><span class="val">₹${bill.total_amount.toLocaleString('en-IN')}</span></div>
