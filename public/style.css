@@ -6,6 +6,44 @@
   box-sizing: border-box
 }
 
+/* WHATSAPP STATUS */
+.whatsapp-status {
+  background: rgba(37, 211, 102, 0.08);
+  border: 1px solid rgba(37, 211, 102, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 15px;
+  text-align: left;
+}
+.ws-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #25d366;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.ws-msg {
+  font-size: 12px;
+  color: var(--muted);
+  background: rgba(0,0,0,0.2);
+  padding: 10px;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.4;
+  border-left: 3px solid #25d366;
+  margin-bottom: 10px;
+}
+.ws-indicator {
+  font-size: 11px;
+  color: #25d366;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 :root {
   --gold: #c9a84c;
   --gold-l: #e8c97a;
@@ -1210,26 +1248,6 @@ body {
 
 .success-sub {
   font-size: 13px;
-  color: var(--muted);
-  margin-bottom: 24px;
-  line-height: 1.6;
-}
-
-/* ── RESPONSIVE / MOBILE ── */
-.mobile-menu-btn {
-  display: none;
-  background: transparent;
-  border: none;
-  color: var(--gold);
-  font-size: 20px;
-  cursor: pointer;
-  margin-right: 15px;
-}
-
-.sidebar-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
   z-index: 999;
   display: none;
 }
