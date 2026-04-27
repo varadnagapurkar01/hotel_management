@@ -116,9 +116,14 @@
     <button class="gold-btn full" onclick="goToBookings()" style="margin-bottom: 10px;">
       <i class="fas fa-calendar-check"></i> View My Bookings
     </button>
-    <button class="gold-btn full" onclick="sendWhatsApp()" style="background: linear-gradient(135deg, #25d366, #128c7e); border: none;">
-      <i class="fab fa-whatsapp"></i> Send WhatsApp Confirmation
-    </button>
+    <div id="whatsappStatus" class="whatsapp-status">
+      <div class="ws-header">
+        <i class="fab fa-whatsapp"></i>
+        <span>WhatsApp Confirmation</span>
+      </div>
+      <div id="wsMsg" class="ws-msg">Preparing message...</div>
+      <div class="ws-indicator"><i class="fas fa-circle-notch fa-spin"></i> Sending automatically...</div>
+    </div>
   </div>
 </div>
 

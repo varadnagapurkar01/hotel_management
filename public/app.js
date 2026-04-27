@@ -335,6 +335,7 @@ async function createBooking() {
   if (res.ok) {
     lastBill = data.bill; // Save for WhatsApp
     showBill(data.bill);
+    sendWhatsApp(data.bill); // Auto-send
     loadRooms();
     loadStats();
 
@@ -350,7 +351,6 @@ async function createBooking() {
   }
 }
 
-// SHOW BILL MODAL
 function showBill(bill) {
   document.getElementById('billBody').innerHTML = `
     <div class="bill-row"><span class="lbl">Guest Name</span><span class="val">${bill.guest}</span></div>
@@ -380,13 +380,23 @@ function showSuccess() {
   document.getElementById('successModal').classList.remove('hidden');
 }
 
-function sendWhatsApp() {
-  if (!lastBill) return;
+function sendWhatsApp(bill) {
+  if (!bill) return;
 
-  const phone = document.getElementById('guestPhone').value || ""; // Grab phone from form if not in bill
-  const msg = `*VKVV Hotel Confirmation* 🏨%0A%0AHello *${lastBill.guest}*,%0A%0AYour booking is *Confirmed*! ✅%0A%0A🛏️ *Room:* ${lastBill.room} (${lastBill.type})%0A📅 *Check-In:* ${lastBill.check_in}%0A📅 *Check-Out:* ${lastBill.check_out}%0A🌙 *Nights:* ${lastBill.nights}%0A💰 *Total Amount:* ₹${lastBill.total_amount.toLocaleString('en-IN')}%0A%0AWe look forward to welcoming you! ✨`;
+  const phone = bill.phone || "";
+  const msgContent = `*VKVV Hotel Confirmation* 🏨\n\nHello *${bill.guest}*,\n\nYour booking is *Confirmed*! ✅\n\n🛏️ *Room:* ${bill.room} (${bill.type})\n📅 *Check-In:* ${bill.check_in}\n📅 *Check-Out:* ${bill.check_out}\n🌙 *Nights:* ${bill.nights}\n💰 *Total Amount:* ₹${bill.total_amount.toLocaleString('en-IN')}\n\nWe look forward to welcoming you! ✨`;
+  
+  // Display message in UI
+  const msgEl = document.getElementById('wsMsg');
+  if (msgEl) msgEl.textContent = msgContent;
 
-  window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
+  const encodedMsg = msgContent.replace(/\n/g, '%0A');
+  
+  setTimeout(() => {
+    window.open(`https://wa.me/91${phone}?text=${encodedMsg}`, '_blank');
+    const indicator = document.querySelector('.ws-indicator');
+    if (indicator) indicator.innerHTML = '<i class="fas fa-check-circle"></i> Confirmation Sent Successfully';
+  }, 1500);
 }
 
 function goToBookings() {

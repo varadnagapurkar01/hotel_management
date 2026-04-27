@@ -191,7 +191,7 @@ app.post('/api/bookings', authMiddleware, (req, res) => {
     res.json({
       message: 'Booking confirmed',
       id: result.lastInsertRowid,
-      bill: { guest: guest_name, room: room.room_number, type: room.type, nights, guests_count, price_per_night: room.price, total_amount, check_in, check_out }
+      bill: { guest: guest_name, phone, room: room.room_number, type: room.type, nights, guests_count, price_per_night: room.price, total_amount, check_in, check_out }
     });
   } catch (err) {
     res.status(400).json({ error: err.message });
