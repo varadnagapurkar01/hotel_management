@@ -1,14 +1,15 @@
 # 🏨 VKVV Hotel Database
 
-> Last updated: **26/4/2026, 8:59:39 pm**
+> Last updated: **27/4/2026, 1:49:48 pm**
 
 ---
 
-## 👤 Users (1)
+## 👤 Users (2)
 
 | ID | Name | Email | Role |
 |----|------|-------|------|
 | 1 | Admin | vkvvitworld@admin.com | admin |
+| 2 | Test User | test@test.com | staff |
 
 ---
 
@@ -16,7 +17,7 @@
 
 | ID | Room # | Type | Price | Status |
 |----|--------|------|-------|--------|
-| 4 | 101 | Standard | ₹1,500 | 🟢 Available |
+| 4 | 101 | Standard | ₹1,500 | 🔴 Booked |
 | 1 | 102 | Standard | ₹1,500 | 🟢 Available |
 | 5 | 201 | Deluxe | ₹3,000 | 🟢 Available |
 | 3 | 202 | Deluxe | ₹3,000 | 🟢 Available |
@@ -26,10 +27,11 @@
 
 ---
 
-## 📋 Bookings (1)
+## 📋 Bookings (2)
 
 | ID | Guest | Phone | Room | Type | Check-In | Check-Out | Amount | Created |
 |----|-------|-------|------|------|----------|-----------|--------|--------|
+| 2 | Guest Name | 1234567890 | 101 | Standard | 2026-04-27 | 2026-04-28 | ₹1,500 | 2026-04-27 08:19:47 |
 | 1 | John Doe | 1234567890 | 301 | Suite | 2026-04-29 | 2026-04-30 | ₹18,000 | 2026-04-26 15:29:39 |
 
 ---

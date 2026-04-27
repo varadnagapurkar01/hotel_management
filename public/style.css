@@ -94,8 +94,8 @@ body {
 }
 
 .hero-logo {
-  width: 72px;
-  height: 72px;
+  width: 130px;
+  height: 130px;
   object-fit: contain;
   filter: drop-shadow(0 0 20px rgba(30, 144, 255, .7)) drop-shadow(0 0 40px rgba(255, 100, 0, .4));
   animation: logoPulse 3s ease-in-out infinite alternate;
@@ -185,8 +185,8 @@ body {
 }
 
 .panel-logo {
-  width: 80px;
-  height: 80px;
+  width: 140px;
+  height: 140px;
   object-fit: contain;
   filter: drop-shadow(0 0 16px rgba(30, 144, 255, .6));
   animation: logoPulse 3s ease-in-out infinite alternate;
@@ -351,8 +351,8 @@ body {
 }
 
 .modal-logo {
-  width: 56px;
-  height: 56px;
+  width: 90px;
+  height: 90px;
   object-fit: contain;
   margin-bottom: 8px
 }
@@ -472,8 +472,8 @@ body {
 }
 
 .sb-logo {
-  width: 40px;
-  height: 40px;
+  width: 70px;
+  height: 70px;
   object-fit: contain;
   flex-shrink: 0;
   filter: drop-shadow(0 0 8px rgba(30, 144, 255, .5));
