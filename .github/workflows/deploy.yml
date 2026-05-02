@@ -26,6 +26,7 @@ jobs:
           push: true
           platforms: linux/amd64
           tags: varadnagapurkar19/vkvv-hotel:latest
+
       - name: Trigger Render Deploy
-          run: |
-              curl "${{ secrets.RENDER_DEPLOY_HOOK }}"
+        run: |
+          curl "${{ secrets.RENDER_DEPLOY_HOOK }}"
